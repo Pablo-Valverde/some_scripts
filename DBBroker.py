@@ -1,32 +1,31 @@
-from typing import Collection
 import pyodbc
 
 _instance = None
 
 class DBBroker:
 
-    def __init_connection__(self, connection_string: str) -> None:
+    def __init_connection__(self, connection_string) -> None:
         conn = pyodbc.connect(connection_string)
         self.cursor = conn.cursor()
 
-    def Read(self, sql: str) -> Collection:
+    def Read(self, sql):
         return self.cursor.execute(sql)
 
-    def Delete(self, sql: str) -> int:
+    def Delete(self, sql):
         return self.cursor.execute(sql).rowcount
 
-    def Update(self, sql: str) -> int:
+    def Update(self, sql):
         return self.cursor.execute(sql).rowcount
         
-def GetBroker() -> DBBroker:
+def GetBroker():
     global _instance
 
     if _instance == None:   
         _instance = DBBroker()
     return _instance
 
-def InitBroker(dbb_path: str) -> None:
+def InitBroker(dbb_path, driver = r"Driver={Microsoft Access Driver (*.mdb, *.accdb)};"):
     global _instance
 
     GetBroker()
-    _instance.__init_connection__(r"Driver={Microsoft Access Driver (*.mdb, *.accdb)};" + r"Dbq=" + dbb_path + r";")
+    _instance.__init_connection__(driver + r"Dbq=" + dbb_path + r";")
